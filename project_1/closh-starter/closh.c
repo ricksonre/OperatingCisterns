@@ -7,8 +7,8 @@
 #include <string.h>
 #include <signal.h>
 
-#define TRUE 1
-#define FALSE 0
+#define true 1
+#define false 0
 
 // tokenize the command string into arguments - do not modify
 void readCmdTokens(char* cmd, char** cmdTokens) {
