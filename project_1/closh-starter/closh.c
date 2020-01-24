@@ -1,5 +1,11 @@
-// closh.c - COSC 315, Winter 2020
-// YOUR NAME HERE
+/* 
+	closh.c - COSC 315, Winter 2020
+	
+	Names:
+	Rickson Reichmann
+	Ren Lin
+	Carther Phillips
+*/
 
 #include <stdio.h>
 #include <unistd.h>
@@ -23,8 +29,7 @@ void readCmdTokens(char* cmd, char** cmdTokens)
 }
 
 // read one character of input, then discard up to the newline - do not modify
-char readChar() 
-{
+char readChar() {
     char c = getchar();
     while (getchar() != '\n');
     return c;
@@ -45,8 +50,10 @@ int main()
         // begin parsing code - do not modify
         printf("closh> ");
         fgets(cmd, sizeof(cmd), stdin);
-        if (cmd[0] == '\n') continue;
+        if (cmd[0] == '\n') 
+			continue;
         readCmdTokens(cmd, cmdTokens);
+		
         do 
 		{
             printf("  count> ");
@@ -54,7 +61,8 @@ int main()
         } while (count <= 0 || count > 9);
         
         printf("  [p]arallel or [s]equential> ");
-        parallel = (readChar() == 'p') ? TRUE : FALSE;
+        parallel = (readChar() == 'p') ? true : false;
+		
         do 
 		{
             printf("  timeout> ");
@@ -70,8 +78,26 @@ int main()
         //                                                    //
         // /////////////////////////////////////////////////////
         
-        // just executes the given command once - REPLACE THIS CODE WITH YOUR OWN
-        execvp(cmdTokens[0], cmdTokens); // replaces the current process with the given program
+		int pid = getpid();
+		printf("closh pid: %d", pid);
+		
+		while(count--)
+		{
+			pid = fork();
+			
+			if(!pid)
+			{
+				printf("%s pid: %d",cmdTokens[0], getpid());
+				execvp(cmdTokens[0], cmdTokens);
+			}
+			else if(!parallel)
+			{
+				sleep(timeout);
+				kill(pid, SIGKILL);
+			}
+		}
+		
+		
         // doesn't return unless the calling failed
         printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
         exit(1);        
