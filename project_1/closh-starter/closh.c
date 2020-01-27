@@ -79,30 +79,41 @@ int main()
         // /////////////////////////////////////////////////////
         
 		int pid = getpid();
-		printf("closh pid: %d", pid);
+		printf("closh pid: %d\n", pid);
 		
 		while(count--)
 		{
 			pid = fork();
 			
-			if(!pid)
+			printf("Child process id: %d\n", pid);
+			printf("Current process id: %d\n", getpid());
+			
+			if(pid <0)
 			{
-				printf("%s pid: %d",cmdTokens[0], getpid());
-				execvp(cmdTokens[0], cmdTokens);
+				printf("Failed to create child process!\n");
+				break;
+			}
+			else if(!pid)
+			{
+				printf("%s pid: %d\n",cmdTokens[0], getpid());
+				
+				if(execvp(cmdTokens[0], cmdTokens)==-1)
+				{
+					// doesn't return unless the calling failed
+					printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
+					break;
+				}
 			}
 			else if(!parallel)
 			{
+				printf("me sleepping zzz. pid: %d",getpid());
+				
 				sleep(timeout);
 				kill(pid, SIGKILL);
 			}
-			
-			if(count==0)exit(1);
-		}
-		
-		
-        // doesn't return unless the calling failed
-        printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
-        exit(1);        
+		}    
     }
+	
+	return 0;
 }
 
