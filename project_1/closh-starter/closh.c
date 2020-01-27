@@ -124,7 +124,6 @@ int main()
 				kill(pid, SIGKILL);
 			}
 		}
-		break;
     }
 	
 	return 0;
