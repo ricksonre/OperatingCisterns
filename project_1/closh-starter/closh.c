@@ -78,25 +78,34 @@ int main()
         //                                                    //
         // /////////////////////////////////////////////////////
         
+		//prints the current process id
 		int pid = getpid();
 		printf("closh pid: %d\n", pid);
-		fflush(stdin);
+		
+		//loops for the number of instance of processes that should be created
 		while(count--)
 		{
+			//forks and gets the child id
 			pid = fork();
 			
-			//printf("Child process id: %d\n", pid);
-			//printf("Current process id: %d\n", getpid());
+			printf("Child process id: %d\n", pid);
+			printf("Current process id: %d\n", getpid());
 			
+			//if fork failed to create a new process 
+			//	prints the error and exits current run
 			if(pid <0)
 			{
 				printf("Failed to create child process!\n");
 				break;
 			}
+			//if the process is a child process
+			//	create a new instance of the selected program
 			else if(!pid)
 			{
 				printf("%s pid: %d\n",cmdTokens[0], getpid());
 				
+				//tries to susbtitute child for desired process
+				//	in case of error prints and exits run
 				if(execvp(cmdTokens[0], cmdTokens)==-1)
 				{
 					// doesn't return unless the calling failed	
@@ -104,15 +113,19 @@ int main()
 					break;
 				}
 			}
-			if(!parallel && timeout)
+			//if the code is suposed to run sequentially and timeout != 0
+			// sleeps for the set amount of time and kill the child process afterwards
+			else if(!parallel && timeout)
 			{
-				printf("me sleepping zzz. pid: %d\n",getpid());
+				printf("me sleepping zzz. pid: %d",getpid());
+				
 				sleep(timeout);
 				kill(pid, SIGKILL);
 			}
 		}
 		break;
     }
+	
 	return 0;
 }
 
