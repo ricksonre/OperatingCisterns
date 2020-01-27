@@ -80,13 +80,13 @@ int main()
         
 		int pid = getpid();
 		printf("closh pid: %d\n", pid);
-		
+		fflush(stdin);
 		while(count--)
 		{
 			pid = fork();
 			
-			printf("Child process id: %d\n", pid);
-			printf("Current process id: %d\n", getpid());
+			//printf("Child process id: %d\n", pid);
+			//printf("Current process id: %d\n", getpid());
 			
 			if(pid <0)
 			{
@@ -104,16 +104,15 @@ int main()
 					break;
 				}
 			}
-			else if(!parallel)
+			if(!parallel && timeout)
 			{
-				printf("me sleepping zzz. pid: %d",getpid());
-				
+				printf("me sleepping zzz. pid: %d\n",getpid());
 				sleep(timeout);
 				kill(pid, SIGKILL);
 			}
-		}    
+		}
+		break;
     }
-	
 	return 0;
 }
 
