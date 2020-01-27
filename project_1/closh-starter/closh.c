@@ -88,8 +88,9 @@ int main()
 			//forks and gets the child id
 			pid = fork();
 			
-			printf("Child process id: %d\n", pid);
-			printf("Current process id: %d\n", getpid());
+			//test prints outs
+			//printf("Child process id: %d\n", pid);
+			//printf("Current process id: %d\n", getpid());
 			
 			//if fork failed to create a new process 
 			//	prints the error and exits current run
