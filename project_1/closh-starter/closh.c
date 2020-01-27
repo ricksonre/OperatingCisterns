@@ -95,6 +95,8 @@ int main()
 				sleep(timeout);
 				kill(pid, SIGKILL);
 			}
+			
+			if(count==0)exit(1);
 		}
 		
 		
