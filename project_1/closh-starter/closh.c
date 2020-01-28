@@ -94,7 +94,6 @@ int main()
 		{
 			seqClosh(count, timeout, cmdTokens);
 		}
-		
     }
 	
 	return 0;
@@ -126,7 +125,8 @@ int parraClosh(int count, char** cmdTokens)
 			}
 		}
 	}
-
+	#pragma omp barrier
+	
 	return retNum;//returns at end of method
 }
 int seqClosh(int count, int timeout, char** cmdTokens)
