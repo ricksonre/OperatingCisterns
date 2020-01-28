@@ -12,10 +12,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <omp.h>
 
 #define true 1
 #define false 0
 
+int seqClosh(int count, int timeout, char** cmdTokens);
+int parraClosh(int count, char** cmdTokens);
 // tokenize the command string into arguments - do not modify
 void readCmdTokens(char* cmd, char** cmdTokens) 
 {
@@ -78,26 +81,69 @@ int main()
         //                                                    //
         // /////////////////////////////////////////////////////
         
+
 		//prints the current process id
 		int pid = getpid();
 		printf("closh pid: %d\n", pid);
+
+		if(parallel)//if parallel run the parraClosh() method
+		{
+			parraClosh(count, cmdTokens);
+		}
+		else//if not parallel run the seqClosh() method
+		{
+			seqClosh(count, timeout, cmdTokens);
+		}
 		
-		//loops for the number of instance of processes that should be created
-		while(count--)
+    }
+	
+	return 0;
+}
+
+int parraClosh(int count, char** cmdTokens)
+{
+	int retNum = 0;//setup a return number
+
+	#pragma omp parallel num_threads(count)//initialise multithreaded section with count threads
+    {
+		int pid = fork();//each thread forks
+		if(pid <0)
+		{
+			printf("Failed to create child process!\n");//error handling for failed fork
+			retNum = -1;
+		}
+		else if(!pid)//if I am the child
+		{
+			printf("%s pid: %d\n",cmdTokens[0], getpid());//print my pid as well as what command I am going to run
+			
+			//tries to susbtitute child for desired process
+			//	in case of error prints and exits run
+			if(execvp(cmdTokens[0], cmdTokens)==-1)
+			{
+				// doesn't return unless the calling failed	
+				printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
+				retNum = -1;
+			}
+		}
+	}
+
+	return retNum;//returns at end of method
+}
+int seqClosh(int count, int timeout, char** cmdTokens)
+{
+	int retNum = 0;//setup of return number
+
+	while(count--)
 		{
 			//forks and gets the child id
-			pid = fork();
-			
-			//test prints outs
-			//printf("Child process id: %d\n", pid);
-			//printf("Current process id: %d\n", getpid());
+			int pid = fork();
 			
 			//if fork failed to create a new process 
 			//	prints the error and exits current run
 			if(pid <0)
 			{
 				printf("Failed to create child process!\n");
-				break;
+				retNum = -1;
 			}
 			//if the process is a child process
 			//	create a new instance of the selected program
@@ -111,21 +157,17 @@ int main()
 				{
 					// doesn't return unless the calling failed	
 					printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
-					break;
+					retNum = -1;
 				}
 			}
 			//if the code is suposed to run sequentially and timeout != 0
 			// sleeps for the set amount of time and kill the child process afterwards
-			else if(!parallel && timeout)
+			else if(timeout)
 			{
-				printf("me sleepping zzz. pid: %d",getpid());
-				
 				sleep(timeout);
 				kill(pid, SIGKILL);
 			}
 		}
-    }
-	
-	return 0;
+	return retNum;
 }
 
