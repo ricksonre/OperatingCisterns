@@ -82,12 +82,13 @@ int main()
         //                                                    //
         // /////////////////////////////////////////////////////
        
-        //array of all processes
+        //declare an array of max length 9
+        //initialises all of the values to -1
         int childs[9];
         for(int i=0;i<9;i++)
             childs[i]=-1;
         int index = 0;
-   
+        //initialise index to 0
         //prints the current process id
         int pid = getpid();
         printf("closh pid: %d\n", pid);
@@ -109,7 +110,7 @@ int main()
             else if(!pid)
             {
                 printf("%s pid: %d\n",cmdTokens[0], getpid());
-               
+                //print pid of program and what command it is going to execute
                 //tries to susbtitute child for desired process
                 //  in case of error prints and exits run
                 if(execvp(cmdTokens[0], cmdTokens)==-1)
@@ -118,7 +119,7 @@ int main()
                     printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
                 }
             }
-            else
+            else//parent adds 1 to index and writes it's child's pid to that index of the array
             {
                 childs[index++] = pid;
             }
@@ -142,35 +143,33 @@ int main()
             }
         }
    
-	//If it is supossed to run parallel
-    if(parallel)
-    {
-		//if there is a set timeout 
-		//	sleeps for set time and kill all child processes afterwards
-        if(timeout)
+	    //If it is supossed to run parallel
+        if(parallel)
         {
-            sleep(timeout);
-            for(int i=0;i<9;i++)
+            //if there is a set timeout 
+            //	sleeps for set time and kill all child processes afterwards
+            if(timeout)
             {
-                if(childs[i] != -1)
+                sleep(timeout);
+                for(int i=0;i<9;i++)//loop through all elements of the array
                 {
-                    kill(childs[i], SIGKILL);
+                    if(childs[i] != -1)//if the element holds a child ID try to kill it
+                    {
+                        kill(childs[i], SIGKILL);
+                    }
+                }
+            }
+            //if there is a no timeout 
+            //	waits until no child process is running
+            else
+            {
+                for(int i=0;i<9;i++)//loops through all elements of array
+                {
+                    int status = -1;
+                    wait(&status);//waits for all elements to be done running
                 }
             }
         }
-		//if there is a no timeout 
-		//	waits until no child process is running
-        else
-        {
-            for(int i=0;i<9;i++)
-            {
-                int status = -1;
-                wait(&status);
-            }
-        }
     }
- 
-    }
-   
-    return 0;
+    return 0;//execution complete, return
 }
