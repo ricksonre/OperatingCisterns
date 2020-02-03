@@ -49,7 +49,7 @@ int main()
     
     while (true) 
 	{ // main shell input loop
-        
+	
         // begin parsing code - do not modify
         printf("closh> ");
         fgets(cmd, sizeof(cmd), stdin);
@@ -122,10 +122,11 @@ int parraClosh(int count, char** cmdTokens)
 				// doesn't return unless the calling failed	
 				printf("Can't execute %s\n", cmdTokens[0]); // only reached if running the program failed
 				retNum = -1;
+				if(omp_get_thread_num())
+					exit(0);
 			}
 		}
 	}
-	#pragma omp barrier
 	
 	return retNum;//returns at end of method
 }
