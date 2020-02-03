@@ -1,12 +1,5 @@
 #include <stdio.h>
 
-typedef	struct
-{
-	int* a;
-	int length;
-	int capacity;
-}vector;
-
 void vec_create(vector* v, int size)
 {
 	v->a = (int*)malloc(size * sizeof(int));
