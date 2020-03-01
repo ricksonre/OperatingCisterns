@@ -49,9 +49,9 @@ request bounded_buffer::process_request()
 {
     request r;
 
-    pthread_cond_wait(&cond, &process_lock);
+    
     pthread_mutex_lock(&process_lock);
-
+    pthread_cond_wait(&cond, &process_lock);
     r = buffer.back();
     buffer.pop();
 
