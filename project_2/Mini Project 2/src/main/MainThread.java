@@ -18,7 +18,6 @@ public class MainThread implements Runnable{
 		while (j-->0) {
 			
 			ex.execute(new Request(10000));
-			ex.execute(new Request(10000));
 			try {
 				System.out.println("Main sleeping after request "+(10-j));
 				Thread.sleep(r.nextInt(1000));
