@@ -1,11 +1,15 @@
 package main;
 
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainThread implements Runnable{
 	Random r = new Random();
 	public static void main(String[] args) {
-
+		
+		MainThread m = new MainThread();
+		ExecutorService ex = Executors.newFixedThreadPool(5);
 	}
 
 	@Override
