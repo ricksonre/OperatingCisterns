@@ -2,32 +2,52 @@ package main;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class Main {
-	static Queue<Request> req = new LinkedList<>();
-	static int queueMaxSize = 9;
-	static int currentQueueCount = 0;
-	static MainThread mt = new MainThread();
-
+public class Main implements Runnable{
+	static ExecutorService pool;   
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		int threadCount = 9;
 		
-		mt.run();
+		pool = Executors.newFixedThreadPool(threadCount);   
+		
+		Main ma = new Main();
+		ma.run();
+		
+	}
+	
+	public Main () {
+		
+		
 		
 		
 	}
 	
-	public static synchronized void addToQueue(Runnable r,Request req ){
-		if(Main.currentQueueCount<Main.queueMaxSize) {
-			Main.req.add(req);
-			currentQueueCount++;
-		}else {
+
+	
+	
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		int i = 9;
+		while (i-- > 0) {
+			
+			pool.execute(new Request(500));
+			
 			try {
-				r.wait();
+				System.out.println("Runing Thread" + i);
+				Thread.sleep((long) (Math.random()*10000));
+				System.out.println("Runing Wake up i");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			
 		}
 		
 	}
