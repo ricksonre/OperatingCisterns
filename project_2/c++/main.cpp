@@ -51,8 +51,10 @@ request bounded_buffer::process_request()
     pthread_mutex_lock(&process_lock);
 
     if (!buffer.empty())
+    {
         r = buffer.back();
-    buffer.pop();
+        buffer.pop();
+    }
 
     pthread_mutex_unlock(&process_lock);
 
