@@ -17,19 +17,4 @@ public class Main {
 	}
 
 	
-	public static synchronized void addToQueue(Runnable r,Request req ){
-		if(Main.currentQueueCount<Main.queueMaxSize) {
-			Main.req.add(req);
-			currentQueueCount++;
-		}else {
-			try {
-				r.wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-	}
-
 }
