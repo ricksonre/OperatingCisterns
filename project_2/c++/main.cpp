@@ -81,7 +81,7 @@ void *master(void *max)
 
         int t = range(random);
         std::cout << "Producer: me tired sleep for " << t << std::endl;
-        sleep(t);
+        sleep(t*1000);
     }
 }
 
