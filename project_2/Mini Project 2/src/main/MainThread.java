@@ -20,7 +20,7 @@ public class MainThread implements Runnable{
 			try {
 				System.out.println("Main sleeping after request "+(10-j));
 				Thread.sleep(r.nextInt(1000));
-				System.out.println("Main completed request "+(10-j));
+				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
