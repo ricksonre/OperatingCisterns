@@ -121,7 +121,7 @@ int main()
 {
 
     int n_slaves; //number of slave threads
-    int *max;     //max time to produce new request
+    int *max = new int;     //max time to produce new request
 
     std::cout << "Enter the number of threads: ";
     std::cin >> n_slaves;
