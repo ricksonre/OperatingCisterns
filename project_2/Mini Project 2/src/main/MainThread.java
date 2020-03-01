@@ -5,12 +5,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainThread implements Runnable{
+	
 	Random r = new Random();
 	ThreadPool ex = new ThreadPool(6);
 	
 
 	@Override
 	public  void run() {
+		
 		// TODO Auto-generated method stub
 		int j = 10; 
 		while (j-->0) {
