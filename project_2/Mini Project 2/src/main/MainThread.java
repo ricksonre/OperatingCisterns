@@ -6,21 +6,21 @@ import java.util.concurrent.Executors;
 
 public class MainThread implements Runnable{
 	Random r = new Random();
-	public static void main(String[] args) {
-		
-		MainThread m = new MainThread();
-		ExecutorService ex = Executors.newFixedThreadPool(5);
-	}
+	ExecutorService ex = Executors.newFixedThreadPool(5);
+	
 
 	@Override
 	public synchronized void run() {
 		// TODO Auto-generated method stub
-		while (true) {
+		int j = 10; 
+		while (j-->0) {
 			
-			Main.addToQueue(this, new Request(5));
+			ex.execute(new Request(2000));
 			
 			try {
-				Thread.sleep(r.nextInt(5000));
+				System.out.println("Main sleeping after request "+(10-j));
+				Thread.sleep(r.nextInt(1000));
+				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
