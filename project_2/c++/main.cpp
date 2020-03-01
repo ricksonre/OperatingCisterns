@@ -51,8 +51,10 @@ request bounded_buffer::process_request()
     pthread_mutex_lock(&process_lock);
 
     if (!buffer.empty())
+    {
         r = buffer.back();
-    buffer.pop();
+        buffer.pop();
+    }
 
     pthread_mutex_unlock(&process_lock);
 
@@ -81,7 +83,7 @@ void *master(void *max)
 
         int t = range(random);
         std::cout << "Producer: me tired sleep for " << t << std::endl;
-        sleep(t);
+        sleep(t*1000);
     }
 }
 
