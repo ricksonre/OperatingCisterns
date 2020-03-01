@@ -29,6 +29,7 @@ class bounded_buffer
 private:
     std::queue<request> buffer;
     pthread_mutex_t process_lock = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 public:
     void add_request(request r);
@@ -40,7 +41,7 @@ void bounded_buffer::add_request(request r)
     pthread_mutex_lock(&process_lock);
 
     buffer.push(r);
-
+    pthread_cond_signal(&cond);
     pthread_mutex_unlock(&process_lock);
 }
 
@@ -48,13 +49,11 @@ request bounded_buffer::process_request()
 {
     request r;
 
+    pthread_cond_wait(&cond, &process_lock);
     pthread_mutex_lock(&process_lock);
 
-    if (!buffer.empty())
-    {
-        r = buffer.back();
-        buffer.pop();
-    }
+    r = buffer.back();
+    buffer.pop();
 
     pthread_mutex_unlock(&process_lock);
 
@@ -83,7 +82,7 @@ void *master(void *max)
 
         int t = range(random);
         std::cout << "Producer: me tired sleep for " << t << std::endl;
-        sleep(t*1000);
+        sleep(t);
     }
 }
 
