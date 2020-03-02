@@ -19,9 +19,12 @@ public class QueueMonitor
 
 	public synchronized void add(Request r) 
 	{
+		System.out.println("me try but fail");
 		try 
 		{
 			boundsSemaphore.acquire();
+			
+			System.out.println("me cry");
 			
 			req.add(r);
 			
@@ -44,6 +47,7 @@ public class QueueMonitor
 		{
 			e.printStackTrace();
 		}
+		System.out.println("me cry");
 		boundsSemaphore.release();
 		Request result = req.poll();
 		return result;
