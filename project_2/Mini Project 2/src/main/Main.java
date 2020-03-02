@@ -16,6 +16,7 @@ public class Main
 	    
 		MainThread master = new MainThread(numberSlaves,max);
 		master.start();
+		scanner.close();
 		
 	}
 
