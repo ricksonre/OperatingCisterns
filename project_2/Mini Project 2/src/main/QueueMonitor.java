@@ -10,7 +10,6 @@ public class QueueMonitor {
 	private Queue<Request> req = new LinkedList<Request>();
 	private Semaphore processSemaphore;
 	private Semaphore boundsSemaphore = new Semaphore(0);
-	Lock lock = new Lock();
 
 	public QueueMonitor(int size)
 	{
@@ -19,11 +18,9 @@ public class QueueMonitor {
 
 	public synchronized void add(Request r) {
 		try {
-			sem.acquire();
-			lock.lock()
+			boundsSemaphore.acquire();
 			req.add(r);
-			lock.unlock();
-			sem2.release();
+			processSemaphore.release();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,10 +39,8 @@ public class QueueMonitor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		sem.release();
-		lock.lock()
+		boundsSemaphore.release();
 		Request result = req.poll();
-		lock.unlock();
 		return result;
 	}
 }
