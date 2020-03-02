@@ -13,6 +13,10 @@ public class Request implements Runnable {
 		this.length = r.nextInt(maxDur);
 		
 	}
+	
+	public int getID() {
+		return ID;
+	}
 
 	@Override
 	public void run() {

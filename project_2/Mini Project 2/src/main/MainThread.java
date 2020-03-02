@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
 
-public class MainThread implements Runnable{
+public class MainThread extends Thread{
 	Random r = new Random();
-	QueueMonitor queue = new QueueMonitor();
+	QueueMonitor queue = new QueueMonitor(8);
 	SlaveThread[] rq;
 	
 	public MainThread(int size) {
