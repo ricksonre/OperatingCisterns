@@ -4,17 +4,21 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
 
-public class MainThread extends Thread{
+public class MainThread extends Thread
+{
 	Random r = new Random();
-	QueueMonitor queue = new QueueMonitor(8);
+	QueueMonitor queue;
 	SlaveThread[] rq;
 	
-	public MainThread(int size) {
+	public MainThread(int size, int max) 
+	{
 		rq= new SlaveThread[size];
-		for(int i = 0; i<size;i++) {
+		for(int i = 0; i<size;i++) 
+		{
 			rq[i] = new SlaveThread(queue);
 			rq[i].start();
 		}
+		queue = new QueueMonitor(max);
 	}
 
 	@Override
