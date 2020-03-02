@@ -17,6 +17,7 @@ public class QueueMonitor {
 	
 	public synchronized void add(Request r) {
 		try {
+			System.out.println("AQadd");
 			sem.acquire();
 			
 			req.add(r);
@@ -31,12 +32,15 @@ public class QueueMonitor {
 	
 	public synchronized Request getNext() {
 		try {
+			System.out.println("AQrem");
 			sem2.acquire();
+			System.out.println("sem2Aqed");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		sem.release();
+		System.out.println("sem1Released");
 		return req.poll();
 		
 	}
