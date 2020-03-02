@@ -23,7 +23,7 @@ public class QueueMonitor
 		try 
 		{
 			boundsSemaphore.acquire();
-			
+			notify();
 			System.out.println("me cry");
 			
 			req.add(r);
@@ -41,6 +41,10 @@ public class QueueMonitor
 	{
 		try
 		{
+			if(req.isEmpty()) {
+				wait();
+			}
+			System.out.println("meme");
 			processSemaphore.acquire();
 		}
 		catch (InterruptedException e)
