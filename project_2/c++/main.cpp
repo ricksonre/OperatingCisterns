@@ -28,20 +28,42 @@ class bounded_buffer
 {
 private:
     std::queue<request> buffer;
-    pthread_mutex_t process_lock = PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_t process_lock;
+	pthread_mutex_t bound_lock;
+    pthread_cond_t cond;
+	
+	
+	int n;
 
 public:
+	void set_bounds(int n);
+	bounded_buffer();
     void add_request(request r);
     request process_request();
 } buffer;
 
+bounded_buffer::bounded_buffer()
+{
+	process_lock = PTHREAD_MUTEX_INITIALIZER;
+	bound_lock = PTHREAD_MUTEX_INITIALIZER;
+    cond = PTHREAD_COND_INITIALIZER;
+}
+
+void bounded_buffer::set_bounds(int n)
+{
+	this->n = n;
+}
+
 void bounded_buffer::add_request(request r)
 {
-    pthread_mutex_lock(&process_lock);
+	if(buffer.size() == (n-1))
+		pthread_mutex_lock(&bound_lock);
+	
+	pthread_mutex_lock(&process_lock);
 
     buffer.push(r);
     pthread_cond_signal(&cond);
+	
     pthread_mutex_unlock(&process_lock);
 }
 
@@ -56,6 +78,7 @@ request bounded_buffer::process_request()
     buffer.pop();
 
     pthread_mutex_unlock(&process_lock);
+    pthread_mutex_unlock(&bound_lock);
 
     return r;
 }
@@ -129,6 +152,8 @@ int main()
     std::cout << "Enter the max time to produce a new request: ";
     std::cin >> *max;
     std::cout << std::endl;
+	
+	buffer.set_bounds(*max);
 
     pthread_t master_thread;
     std::vector<pthread_t> slave_threads(n_slaves); //instantiate master class
