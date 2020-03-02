@@ -27,7 +27,7 @@ public class MainThread extends Thread
 		// TODO Auto-generated method stub
 		int j = 10; 
 		while (j-->0) {
-			
+			System.out.println("tryAdd");
 			queue.add(new Request(10000));
 			try {
 				System.out.println("Main sleeping after request "+(10-j));

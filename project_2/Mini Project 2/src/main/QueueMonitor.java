@@ -2,6 +2,7 @@ package main;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.locks.Lock;
 import java.util.concurrent.Semaphore;
 
 public class QueueMonitor {
@@ -9,43 +10,42 @@ public class QueueMonitor {
 	private Queue<Request> req = new LinkedList<Request>();
 	private Semaphore processSemaphore;
 	private Semaphore boundsSemaphore = new Semaphore(0);
-	
-	public QueueMonitor(int size) 
+	Lock lock = new Lock();
+
+	public QueueMonitor(int size)
 	{
 		processSemaphore = new Semaphore(size);
 	}
-	
-	public synchronized void add(Request r) 
-	{
-		try 
-		{
-			processSemaphore.acquire();
-			
+
+	public synchronized void add(Request r) {
+		try {
+			sem.acquire();
+			lock.lock()
 			req.add(r);
-			
-			boundsSemaphore.release();
-		} 
-		catch (InterruptedException e) 
-		{
+			lock.unlock();
+			sem2.release();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	public synchronized Request getNext() 
+
+	public synchronized Request getNext()
 	{
-		try 
+		try
 		{
 			boundsSemaphore.acquire();
-		} 
-		catch (InterruptedException e) 
+		}
+		catch (InterruptedException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		processSemaphore.release();
-		return req.poll();
-		
+		sem.release();
+		lock.lock()
+		Request result = req.poll();
+		lock.unlock();
+		return result;
 	}
 }
