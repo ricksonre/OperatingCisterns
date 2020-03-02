@@ -17,7 +17,9 @@ public class Request implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		
 		try {
+			Thread.sleep(100);
 			System.out.println("Task "+ID+" running");
 			Thread.sleep(length);
 			System.out.println("Task "+ID+" complete");
