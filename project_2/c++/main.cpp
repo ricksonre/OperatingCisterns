@@ -56,7 +56,7 @@ void bounded_buffer::set_bounds(int n)
 
 void bounded_buffer::add_request(request r)
 {
-	if(buffer.size() == (n-1))
+	if(buffer.size() >= (n-1))
 		pthread_mutex_lock(&bound_lock);
 	
 	pthread_mutex_lock(&process_lock);
