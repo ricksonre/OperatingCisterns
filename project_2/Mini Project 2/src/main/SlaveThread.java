@@ -20,7 +20,7 @@ public class SlaveThread extends Thread {
 		while (true) {
 			Request r = q.getNext();
 			System.out.println("Slave thread "+ID+" is running ");
-			new Thread().start();
+			new Thread(r).start();
 			
 		}
 	}
