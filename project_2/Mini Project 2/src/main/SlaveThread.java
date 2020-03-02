@@ -16,11 +16,13 @@ public class SlaveThread extends Thread {
 		this.ID = SlaveThread.SlaveID++;
 	}
 
-	public void run() {
-		while (true) {
+	public void run() 
+	{
+		while (true) 
+		{
 			Request r = q.getNext();
 			System.out.println("Slave thread "+ID+" is running ");
-			new Thread(r).start();
+			r.run();
 			
 		}
 	}

@@ -2,27 +2,33 @@ package main;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.locks.Lock;
 import java.util.concurrent.Semaphore;
 
-public class QueueMonitor {
+public class QueueMonitor 
+{
 
 	private Queue<Request> req = new LinkedList<Request>();
 	private Semaphore processSemaphore;
-	private Semaphore boundsSemaphore = new Semaphore(0);
+	private Semaphore boundsSemaphore;
 
 	public QueueMonitor(int size)
 	{
-		processSemaphore = new Semaphore(size);
+		boundsSemaphore = new Semaphore(size);
+		processSemaphore = new Semaphore(0);
 	}
 
-	public synchronized void add(Request r) {
-		try {
+	public synchronized void add(Request r) 
+	{
+		try 
+		{
 			boundsSemaphore.acquire();
+			
 			req.add(r);
+			
 			processSemaphore.release();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (InterruptedException e) 
+		{
 			e.printStackTrace();
 		}
 
@@ -32,11 +38,10 @@ public class QueueMonitor {
 	{
 		try
 		{
-			boundsSemaphore.acquire();
+			processSemaphore.acquire();
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		boundsSemaphore.release();

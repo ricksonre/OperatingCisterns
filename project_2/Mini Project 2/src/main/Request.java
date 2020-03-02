@@ -19,15 +19,19 @@ public class Request implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public void run() 
+	{
 		// TODO Auto-generated method stub
 		
-		try {
+		try 
+		{
 			Thread.sleep(100);
 			System.out.println("Task "+ID+" running");
 			Thread.sleep(length);
 			System.out.println("Task "+ID+" complete");
-		} catch (InterruptedException e) {
+		} 
+		catch (InterruptedException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
