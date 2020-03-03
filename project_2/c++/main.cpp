@@ -160,7 +160,7 @@ int main()
     std::cin >> *max;//queries and stores max wait time for request production
     std::cout << std::endl;
 	
-	buffer.set_bounds(*max);//calls the set_bounds method to set the bounds
+	buffer.set_bounds(n_slaves);//calls the set_bounds method to set the bounds
 
     pthread_t master_thread;
     std::vector<pthread_t> slave_threads(n_slaves); //instantiate master class
