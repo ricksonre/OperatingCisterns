@@ -3,6 +3,7 @@ package main;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
+//Main Thread is in charge of creating slave threads stored in an array and the creation of the Monitor Queue
 
 public class MainThread extends Thread
 {
@@ -27,13 +28,15 @@ public class MainThread extends Thread
 	@Override
 	public  void run() 
 	{
-		
+		//creation of new Request and insertion into the Monitor Queue
 		while (true) 
 		{
+			
 			queue.add(new Request(r.nextInt(max*1000)));
 			System.out.println("me left ");
 			try 
 			{
+				//Printing result and sleeping
 				System.out.println("Main sleeping after request "+ Request.requestID);
 				Thread.sleep(r.nextInt(max*1000));
 				

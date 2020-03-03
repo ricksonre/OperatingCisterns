@@ -1,7 +1,7 @@
 package main;
 
-import java.util.Random;
 
+//This class represents the Requests produced by the main thread to simulate activity
 public class Request implements Runnable {
 	public static int requestID;
 	int ID;
