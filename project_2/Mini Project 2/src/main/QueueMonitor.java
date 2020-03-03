@@ -10,12 +10,14 @@ public class QueueMonitor
 
 	private Queue<Request> req = new LinkedList<Request>();
 	private Semaphore processSemaphore;
-	private Semaphore boundsSemaphore;
+	private Semaphore boundsSemaphore;//declaring class vars
+	//the Semaphore is just a counter but everyone seemed very attached to it so I'm leaving it
 
 	public QueueMonitor(int size)
 	{
 		boundsSemaphore = new Semaphore(size);
 		processSemaphore = new Semaphore(0);
+		//starting vals for semaphores
 	}
 
 	public synchronized void add(Request r) 

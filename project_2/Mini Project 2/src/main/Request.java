@@ -5,33 +5,33 @@ package main;
 public class Request implements Runnable {
 	public static int requestID;
 	int ID;
-	int length;
+	int length;//declare class vars
 	
-	public Request(int maxDur) 
+	public Request(int maxDur) //constructor
 	{
-		this.ID = Request.requestID++;
+		this.ID = Request.requestID++;//initialize vars to required vals
 		this.length = maxDur;
 		
 	}
 	
-	public int getID() {
+	public int getID() {//getId method, returns the request ID
 		return ID;
 	}
 
 	@Override
-	public void run() 
+	public void run() //main running function to run a thread
 	{
 		
 		try 
 		{
 			Thread.sleep(100);
-			System.out.println("Task "+ID+" running");
+			System.out.println("Task "+ID+" running @ time " + System.currentTimeMillis());
 			Thread.sleep(length);
-			System.out.println("Task "+ID+" complete");
+			System.out.println("Task "+ID+" complete " + + System.currentTimeMillis());
+			//sleep and print what you are doing, sleep for request length
 		} 
 		catch (InterruptedException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
