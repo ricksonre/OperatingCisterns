@@ -1,0 +1,5 @@
+Work Accomplished: The Java classes were interesting to build, they are all good behaving now  after a few rounds of debugging. 
+Main class is used to create and MainThread and run it. MainThread will create a Monitored Queue and an array of kids. 
+Each of the child threads will wait patiently until the queue distributes a task for the kid to complete. 
+The Queue monitor will maintain a capacity and allocates a Semaphore permit for each space left.
+A second semaphore Will keep track of the quantity of tasks left in the queue.
