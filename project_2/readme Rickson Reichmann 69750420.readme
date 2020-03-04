@@ -1,0 +1,51 @@
+Project 2
+
+Team Menbers:
+	Carter Phillips
+	Ren Lin
+	Rickson Reichmann
+
+My contribution for the project:
+	My main role for the project was to design and write the c++ code for 
+	the project. As the main problem was about the access to the bounded buffer
+	I decided to only create a class for it. And handle the synchronization
+	problems inside its 2 functions add_request() and process_request().
+	As there were no big benefits in creating a class for the master threads
+	and slaves threads. And pthreads uses c style of code I decided to only
+	use 2 functions to work as the master and slave threads. Also,
+	for the bounded buffer instead of using a simple array we decided to use
+	a Queue as its behaviours fitted the task. And with a variable inside the 
+	bounded buffer we could simulate the max size which the queue should have.
+	So it fitted the criteria needed without the need of implementating extra code.
+	
+How the c++ code works
+	The way the c++ code works is simple we have 2 mutex locks and 1 conditional 
+	variable. The conditional variable counts how many elements are added into the queue
+	if there is no elements added the slave threads sleeps until there is one. In the 
+	same sense we use a mutex lock, if the number of elements in the array is bigger than its max the master
+	will sleep until a slave proccesses something and a space is open to another process_request
+	to be added.
+	
+	I also worked in debugging the java code and solving some problems that appeared 
+	during the code implementation.
+	
+How hard was to implement it in Java
+	It was not hard.
+	
+How hard was to implement it in c++
+	It was not hard. The only bothersome thing was the fact that to properly write the code
+	it was needed to have a mix style between c-style and c++-style of code.
+
+		
+Instructions on compilation and running:
+	compilation, run "make" in terminal in the c++ folder, or in the src folder of java
+	for running c++, run "./a.out" in the c++ folder
+	for java, run "java main/Main" in the src folder
+		
+Group Assessement:
+	I believe everyone contributed equally for the development of the project.
+	
+	Carther Phillips 	33.33%
+	Ren Lin 			33.33%
+	Rickson Reichmann 	33.33%
+	
