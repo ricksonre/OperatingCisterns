@@ -25,9 +25,12 @@ bool load_file(virtual_addresses& v, byte& n, byte& m)
 		while(std::getline(file,line))
 			v.push_back(std::stoi(line));
 
+		
+		file.close();
+
 		return 1;
 	}
-
+	
 	std::cout << "Failed to load the file";
 	return 0;
 }

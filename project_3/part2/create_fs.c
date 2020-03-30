@@ -1,10 +1,8 @@
-/* create a file  to act as a disk  and format the file system residing on the disk */
-
 #include <stdio.h>
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <io.h>
 
 int
 main(int argc, char *argv[])
