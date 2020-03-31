@@ -3,6 +3,10 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <cstdlib>
+#include <cstdint>
+#include <iomanip>
+
 
 class inodes
 {
@@ -19,10 +23,11 @@ std::ostream& operator <<(std::ostream& stream, inodes& node)
 {
 	for (auto e : node.name)
 		stream << e;
-	stream << node.size;
+
+	stream << std::setw(4) << std::hex << node.size;
 	for (auto e : node.block_pointers)
-		stream << e;
-	stream << node.used;
+		stream << std::setw(4) << std::hex << e;
+	stream << std::setw(4) << std::hex << node.used;
 
 	return stream;
 }
@@ -62,18 +67,18 @@ private:
 		auto x = aux.substr(pointer,4);
 
 		//set the size of the file	
-		node[i].size = std::stoi(aux.substr(pointer, 4));
+		node[i].size = std::stoi(aux.substr(pointer, 4),0,16);
 		pointer += 4;
 
 		//set the pointers of the file	
 		for (int k = 0; k < 8; k++)
 		{
-			node[i].block_pointers[k] = std::stoi(aux.substr(pointer,4));
+			node[i].block_pointers[k] = std::stoi(aux.substr(pointer,4),0,16);
 			pointer += 4;
 		}
 
 		//set if the file is used
-		node[i].used = std::stoi(aux.substr(pointer,4));
+		node[i].used = std::stoi(aux.substr(pointer,4), 0, 16);
 		pointer += 4;
 
 	}
@@ -176,7 +181,7 @@ public:
 			std::vector<int> free_blocks;
 			for (int i = 0; i < 128; i++)
 			{
-				if (in_use[i] == '0')
+				if (in_use[i] =='0')
 				{
 					free_blocks.push_back(i);
 					if (free_blocks.size() == size)
@@ -186,12 +191,15 @@ public:
 
 			if (free_blocks.size() > 0)
 			{
-				strcpy(name, node[first_free].name);
+				strcpy(node[first_free].name, name);
 				node[first_free].size = size;
 				node[first_free].used = 1;
 				
-				for(int j = 0; j<free_blocks.size(); j++)
+				for (int j = 0; j < free_blocks.size(); j++)
+				{
 					node[first_free].block_pointers[j] = free_blocks[j];
+					in_use[free_blocks.at(j)] = '1';
+				}
 
 				save();
 			}
@@ -371,10 +379,12 @@ void run(std::ifstream& file)
 
 	my_file_system s(disk_name);
 
+	int counter = 0;
+
 	char command;
 	while (file >> command)
 	{
-		
+		counter++;
 		if (command == 'C')
 		{
 			file >> file_name;
