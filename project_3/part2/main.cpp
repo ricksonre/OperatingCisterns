@@ -22,7 +22,15 @@ public:
 std::ostream& operator <<(std::ostream& stream, inodes& node)
 {
 	for (auto e : node.name)
+	{
+		//std::cout << e << std::endl;
+		if (e == '\0')
+		{
+			e = ' ';
+		}
+
 		stream << e;
+	}
 
 	stream << std::setw(4) << std::hex << node.size;
 	for (auto e : node.block_pointers)
@@ -43,6 +51,7 @@ class my_file_system: public super_block
 {
 private:
 	std::string disk_name;
+
 
 	void load(std::string& aux)
 	{
@@ -129,9 +138,7 @@ public:
 		{
 			char  aux[1024];
 			
-			//file.read(aux, 1024);
-			for (int i = 0; i < 1024; i++)
-				aux[i] = file.get();
+			file.read(aux, 1024);
 
 			std::string s(std::move(aux));
 			
@@ -274,7 +281,24 @@ public:
 
 		std::cout << "List of files:" << std::endl;
 		for (auto n : node)
-			std::cout << "    " << n.name <<" "<<n.size<< std::endl;
+		{
+			std::string aux;
+			for (auto e : n.name)
+			{
+				
+				if (e == '\0')
+				{
+					e = ' ';
+				}
+
+				aux += e;
+			}
+
+			std::cout << "    " << aux << " " << n.size << std::endl;
+		}
+
+
+		
 
 		return 0;
 	}
@@ -369,6 +393,7 @@ public:
 	}
 };
 
+
 void run(std::ifstream& file)
 {
 	
@@ -388,8 +413,7 @@ void run(std::ifstream& file)
 		counter++;
 		if (command == 'C')
 		{
-			file >> file_name;
-			file >> n;
+			file >> file_name >> n;
 
 			s.create(file_name, n);
 		}
@@ -405,15 +429,13 @@ void run(std::ifstream& file)
 		}
 		else if (command == 'R')
 		{
-			file >> file_name;
-			file >> n;
+			file >> file_name >> n;
 
 			s.read(file_name, n, buffer);
 		}
 		else if (command == 'W')
 		{
-			file >> file_name;
-			file >> n;
+			file >> file_name >> n;
 
 			s.write(file_name, n, buffer);
 		}
