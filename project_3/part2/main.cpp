@@ -8,7 +8,6 @@
 #include <iomanip>
 
 
-//Object representing index nodes
 class inodes
 {
 public:
@@ -33,7 +32,6 @@ std::ostream& operator <<(std::ostream& stream, inodes& node)
 	return stream;
 }
 
-//Object that stores the free block list and index nodes for each file
 class super_block
 {
 public:
@@ -105,8 +103,9 @@ private:
 		file.close();
 	}
 
-
 public:
+
+
 
 	my_file_system(std::string disk_name)
 	{
@@ -129,8 +128,11 @@ public:
 		if (file.is_open())
 		{
 			char  aux[1024];
-			file.read(aux, 1024);
 			
+			//file.read(aux, 1024);
+			for (int i = 0; i < 1204; i++)
+				aux[i] = file.get();
+
 			std::string s(std::move(aux));
 			
 			load(s);
@@ -270,11 +272,9 @@ public:
 
 		// Step 1: Print the name and size fields of all used inodes.
 
-		for (auto& n : node)
-		{
-			std::cout << "List of files:" << std::endl;
+		std::cout << "List of files:" << std::endl;
+		for (auto n : node)
 			std::cout << "    " << n.name <<" "<<n.size<< std::endl;
-		}
 
 		return 0;
 	}
