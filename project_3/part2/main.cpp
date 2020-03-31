@@ -8,6 +8,7 @@
 #include <iomanip>
 
 
+//Object representing index nodes
 class inodes
 {
 public:
@@ -32,6 +33,7 @@ std::ostream& operator <<(std::ostream& stream, inodes& node)
 	return stream;
 }
 
+//Object that stores the free block list and index nodes for each file
 class super_block
 {
 public:
@@ -103,9 +105,8 @@ private:
 		file.close();
 	}
 
+
 public:
-
-
 
 	my_file_system(std::string disk_name)
 	{
