@@ -130,7 +130,7 @@ public:
 			char  aux[1024];
 			
 			//file.read(aux, 1024);
-			for (int i = 0; i < 1204; i++)
+			for (int i = 0; i < 1024; i++)
 				aux[i] = file.get();
 
 			std::string s(std::move(aux));
