@@ -117,7 +117,18 @@ private:
 
 public:
 
-
+	int strc(std::string s1, std::string s2)
+	{
+		int counter = 0;
+		for(char i : s1)
+		{
+			if(s1[counter] != s2[counter])
+			{
+				return -1;
+			}
+		}
+		return 0;
+	}
 
 	my_file_system(std::string disk_name)
 	{
@@ -186,9 +197,9 @@ public:
 
 
 			//find if a file has already been created (currently strcmp is not finding a match and am unsure why)
-			if (std::strcmp(node[i].name,name)==0)
+			if (strc(node[i].name,name)==0)
 			{
-				std::cout << "File with the same name already exists" << std::endl;
+				std::cout << "\nFile with the same name already exists\n" << std::endl;
 				return -1;
 			}
 		}
@@ -263,7 +274,7 @@ public:
 		for (auto &n : node)
 		{
 			//find the node to delete
-			if (strcmp(n.name, name) == 0)
+			if (strc(n.name, name) == 0)
 			{
 
 				found = true;
@@ -330,7 +341,7 @@ public:
 		for (auto& n : node)
 		{
 			//find the file we want
-			if (strcmp(n.name, name) == 0)
+			if (strc(n.name, name) == 0)
 			{
 				found = true;
 				//check if the file has the specified block #
@@ -381,7 +392,7 @@ public:
 		for (auto& n : node)
 		{
 			//find specified file
-			if (strcmp(n.name, name) == 0)
+			if (strc(n.name, name) == 0)
 			{
 				found = true;
 				//check if the file has specified number of blocks
