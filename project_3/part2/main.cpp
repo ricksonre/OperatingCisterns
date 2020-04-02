@@ -8,53 +8,88 @@
 #include <iomanip>
 #include <cstring>
 
+//copy c into c1
+void ca_copy(char *c, char *c1,int length)
+{
+	bool null_terminated = false;;
+	for (auto i = 0; i < length; i++)
+	{
+		if (null_terminated)
+			c1[i] = ' ';
+		else 
+			c1[i] = c[i];
 
-class inodes//inodes class declaration
+		if (c[i] == '\0')
+		{
+			null_terminated = true;
+		}
+	}
+}
+
+class inodes
 {
 public:
 	char name[8];
 	int size;
 	int block_pointers[8];
 	int used;
-	
-	friend std::ostream& operator <<(std::ostream& stream, inodes& node);//friend function declaration
+
+	friend std::ostream& operator <<(std::ostream& stream, inodes& node);
 };
 
 std::ostream& operator <<(std::ostream& stream, inodes& node)
 {
+	/*
+	bool end=false;
+	char e = ' ';
+	for (int i = 0; i < 8; i++)
+	{
+		e = node.name[i];
+		if (e == '\0' || end)
+		{
+			end == true;
+			e = ' ';
+		}
+		s += e;
+		stream << e;
+	}*/
+	std::string s = "";
 	for (auto e : node.name)
 	{
 		//std::cout << e << std::endl;
 		if (e == '\0')
 		{
-			e = ' ';//replace terminators with a space
+			e = ' ';
 		}
-
+		//std::cout << "TEST:                " << e << std::endl;
+		s += e;
 		stream << e;
 	}
+	std::cout << "DEBUG char8                " << node.name << std::endl;
+	std::cout << "DEBUG string             " << s << std::endl;
 
-	stream << std::setw(4) << std::hex << node.size;//write node size to the stream
+	stream << std::setw(4) << std::hex << node.size;
 	for (auto e : node.block_pointers)
-		stream << std::setw(4) << std::hex << e;//for each block pointer it is written to stream
-	stream << std::setw(4) << std::hex << node.used;//node usage is written to stream
+		stream << std::setw(4) << std::hex << e;
+	stream << std::setw(4) << std::hex << node.used;
 
 	return stream;
 }
 
-class super_block//super block class declaration
+class super_block
 {
 public:
 	char in_use[128];
 	inodes node[16];
 };
 
-class my_file_system: public super_block//declaring file system class which extends super block
+class my_file_system : public super_block
 {
 private:
 	std::string disk_name;
 
 
-	void load(std::string& aux)// loads the file system
+	void load(std::string& aux)
 	{
 		int pointer;
 
@@ -62,11 +97,11 @@ private:
 			in_use[pointer] = aux[pointer];
 
 		for (int i = 0; i < 16; i++)
-			set_node(aux, pointer,i);
+			set_node(aux, pointer, i);
 
 	}
 
-	void set_node(std::string& aux, int& pointer,int i)
+	void set_node(std::string & aux, int& pointer, int i)
 	{
 		//set the name of the file
 		for (int j = 0; j < 8; j++)
@@ -74,32 +109,30 @@ private:
 			node[i].name[j] = aux[pointer];
 			pointer++;
 		}
-		auto x = aux.substr(pointer,4);
+		std::cout<<std::endl;
 
 		//set the size of the file	
-		node[i].size = std::stoi(aux.substr(pointer, 4),0,16);
+		node[i].size = std::stoi(aux.substr(pointer, 4), 0, 16);
 		pointer += 4;
 
 		//set the pointers of the file	
 		for (int k = 0; k < 8; k++)
 		{
-			node[i].block_pointers[k] = std::stoi(aux.substr(pointer,4),0,16);
+			node[i].block_pointers[k] = std::stoi(aux.substr(pointer, 4), 0, 16);
 			pointer += 4;
 		}
 
 		//set if the file is used
-		node[i].used = std::stoi(aux.substr(pointer,4), 0, 16);
+		node[i].used = std::stoi(aux.substr(pointer, 4), 0, 16);
 		pointer += 4;
 
 	}
 
 	void save()
 	{
-		//setup file and open it
 		std::ofstream file;
 		file.open(disk_name, std::ios::out);
 
-		//makes sure is open, then seeks0 and saves
 		if (file.is_open())
 		{
 			file.seekp(0);
@@ -109,27 +142,15 @@ private:
 			for (auto e : node)
 				file << e;
 		}
-		else//print error
-			std::cout << "Failed to open the file"<<std::endl;
-		//close file
+		else
+			std::cout << "Failed to open the file" << std::endl;
+
 		file.close();
 	}
 
 public:
 
-	int strc(std::string s1, std::string s2)
-	{
-		int counter = 0;
-		for(char i : s1)
-		{
-			if(s1[counter] != s2[counter])
-			{
-				return -1;
-			}
-			counter ++;
-		}
-		return 0;
-	}
+
 
 	my_file_system(std::string disk_name)
 	{
@@ -145,23 +166,23 @@ public:
 		// the process exits.
 
 		this->disk_name = disk_name;
-		//open file
+
 		std::ifstream file;
 		file.open(disk_name, std::ios::in);
-		//make sure file is open, then read to an aux char array, gives first KB 
+
 		if (file.is_open())
 		{
 			char  aux[1024];
-			
+
 			file.read(aux, 1024);
 
 			std::string s(std::move(aux));
-			//load file
+
 			load(s);
 		}
 		else
-			std::cout << "Failed to load the file"<<std::endl;//print error
-		
+			std::cout << "Failed to load the file" << std::endl;
+
 		file.close();
 	}
 
@@ -186,48 +207,42 @@ public:
 	  // Step 4: Write the entire super block back to disk.
 	  //	An easy way to do this is to seek to the beginning of the disk
 	  //	and write the 1KB memory chunk.
-		//find first free inode
+
 		int first_free = -1;
 		for (int i = 0; i < 16; i++)
 		{
-
 			if (first_free == -1 && !node[i].used)
 				first_free = i;
 
-			//std::cout<<node[i].name << " vs " << name<<std::endl;
-
-
-			//find if a file has already been created (currently strcmp is not finding a match and am unsure why)
-			if (strc(node[i].name,name)==0)
+			if (strcmp(name, node[i].name) == 0)
+			//if (!dumb_compare(node[i].name, name))
 			{
-				std::cout << "\nFile with the same name already exists\n" << std::endl;
+				std::cout << "File with the same name already exists" << std::endl;
 				return -1;
 			}
 		}
 
-		//if there is a free inode
 		if (first_free >= 0)
 		{
-			//find free blocks
 			int count = 0;
 			std::vector<int> free_blocks;
 			for (int i = 0; i < 128; i++)
 			{
-				if (in_use[i] =='0')
+				if (in_use[i] == '0')
 				{
 					free_blocks.push_back(i);
 					if (free_blocks.size() == size)
 						break;
 				}
 			}
-			//if there are free blocks
+
 			if (free_blocks.size() > 0)
 			{
-				//name the node and set it up
-				strcpy(node[first_free].name, name);
+				//strcpy(node[first_free].name, name);
+				ca_copy(name, node[first_free].name,8);
 				node[first_free].size = size;
 				node[first_free].used = 1;
-				//set blocs as in use
+
 				for (int j = 0; j < free_blocks.size(); j++)
 				{
 					node[first_free].block_pointers[j] = free_blocks[j];
@@ -247,8 +262,9 @@ public:
 			std::cout << "Failed to find a free inode" << std::endl;
 			return -1;
 		}
+		///AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 		///	does not specify if I should remove the blocks too
-		std::cout<<"	Successfully created file "<<name<<"\n\n";
+		std::cout << "	Successfully created file " << name << "\n\n";
 		return 0;
 	}
 
@@ -272,16 +288,15 @@ public:
 
 		bool found = false;
 
-		for (auto &n : node)
+		for (auto& n : node)
 		{
-			//find the node to delete
-			if (strc(n.name, name) == 0)
+			if (strcmp(n.name, name) == 0)
+			//if (!dumb_compare(n.name, name))
 			{
-
 				found = true;
 				n.used = 0;
 				n.size = 0;
-				//set it to not in use
+
 				for (auto& e : n.block_pointers)
 					in_use[e] = '0';
 				for (auto& e : n.name)
@@ -292,12 +307,12 @@ public:
 				save();
 			}
 		}
-		if(!found)
-			std::cout << "	Inode does not exist" << std::endl<<std::endl;
+		if (!found)
+			std::cout << "Inode does not exist" << std::endl;
 		else
-			std::cout << "	File \""<<name<<"\" deleted.\n\n";
+			std::cout << "	File \"" << name << "\" deleted.\n\n";
 		return 0;
-	} 
+	}
 
 
 	int ls(void)
@@ -309,20 +324,20 @@ public:
 		std::cout << "List of files:" << std::endl;
 		for (auto n : node)
 		{
-			//remove terminators from names
 			std::string aux;
 			for (auto e : n.name)
 			{
-				if(e == '\0')
-					e = ' ';
 				aux += e;
 			}
-			//remove empty names
-			if(!(aux == "00000000"))
+
+			if (!(aux == "00000000"))
 			{
-				std::cout << "    " << aux << " " << n.size << std::endl<<std::endl;
+				std::cout << "    " << aux << " " << n.size << std::endl << std::endl;
 			}
 		}
+
+
+
 
 		return 0;
 	}
@@ -341,11 +356,10 @@ public:
 		bool found = false;
 		for (auto& n : node)
 		{
-			//find the file we want
-			if (strc(n.name, name) == 0)
+			if (strcmp(n.name, name) == 0)
+			//if (!dumb_compare(n.name, name))
 			{
 				found = true;
-				//check if the file has the specified block #
 				if (n.size < blockNum)
 				{
 					std::cout << "The does not contain " << blockNum << " blocks" << std::endl;
@@ -354,7 +368,7 @@ public:
 
 				std::ifstream file;
 				file.open(disk_name, std::ios::in);
-				//if we have the file open, read from the file at specified block into the buffer
+
 				if (file.is_open())
 				{
 					char aux[1024];
@@ -369,11 +383,11 @@ public:
 
 				break;
 			}
-		}	
-		if(found)
-			std::cout<<"	Successfully read from file " << name <<"\n\n";
+		}
+		if (found)
+			std::cout << "	Successfully read from file " << name << "\n\n";
 		else
-			std::cout<<"	Failed to find file " << name <<"\n\n";
+			std::cout << "	Failed to find file " << name << "\n\n";
 		return 0;
 	}
 
@@ -387,16 +401,16 @@ public:
 		// Step 1: Locate the inode for this file as in Step 1 of delete.
 
 		// Step 2: Seek to blockPointers[blockNum] and write buf to disk.
-		
+
 		bool found = false;
 
 		for (auto& n : node)
 		{
-			//find specified file
-			if (strc(n.name, name) == 0)
+
+			if (strcmp(n.name, name) == 0)
+			//if (!dumb_compare(n.name, name))
 			{
 				found = true;
-				//check if the file has specified number of blocks
 				if (n.size < blockNum)
 				{
 					std::cout << "The does not contain " << blockNum << " blocks" << std::endl;
@@ -405,11 +419,11 @@ public:
 
 				std::ofstream file;
 				file.open(disk_name, std::ios::out);
-				//IF OPEN, SEEK to where we want and write buffer to it
+
 				if (file.is_open())
 				{
 					file.seekp((int)n.block_pointers[blockNum] * 1024);
-					file<<buf;
+					file << buf;
 				}
 				else
 					std::cout << "Failed to load the file" << std::endl;
@@ -418,24 +432,24 @@ public:
 
 				break;
 			}
-				
+
 		}
 
-		if(!found)
+		if (!found)
 		{
 			std::cout << "	File does not exist\n\n";
 		}
 		else
-			std::cout << "	Successfully wrote to file "<<name<<"\n\n";
+			std::cout << "	Successfully wrote to file " << name << "\n\n";
 
 		return 0;
 	}
 };
 
-//main running function
-void run(std::ifstream& file)
+
+void run(std::ifstream & file)
 {
-	
+
 	int n;
 	char file_name[8], buffer[1024];
 
@@ -449,39 +463,37 @@ void run(std::ifstream& file)
 	char command;
 	while (file >> command)
 	{
-		//while we have more commands
-
-		std::cout<<"Command: " << command;
+		std::cout << "Command: " << command;
 		counter++;
-		//depending on the command call the function to execute it
 		if (command == 'C')
 		{
 			file >> file_name >> n;
+			std::cout << " FileName " << file_name << " block # " << n << std::endl;
 			s.create(file_name, n);
 		}
 		else if (command == 'D')
 		{
-			std::cout<< std::endl;
 			file >> file_name;
+			std::cout << " FileName " << file_name << std::endl;
 			s.del(file_name);
 		}
 		else if (command == 'L')
 		{
-			std::cout<<std::endl;
+			std::cout << std::endl;
 			s.ls();
 		}
 		else if (command == 'R')
 		{
 			file >> file_name >> n;
 
-			std::cout<<" fileName "<<file_name<<" block # "<< n<<std::endl;
+			std::cout << " fileName " << file_name << " block # " << n << std::endl;
 
 			s.read(file_name, n, buffer);
 		}
 		else if (command == 'W')
 		{
 			file >> file_name >> n;
-			std::cout<< " fileName " <<file_name<< " block # "<<n<<std::endl; 
+			std::cout << " fileName " << file_name << " block # " << n << std::endl;
 			s.write(file_name, n, buffer);
 		}
 		else
@@ -494,7 +506,7 @@ void run(std::ifstream& file)
 
 int main()
 {
-	//main function, call the run or error
+
 	std::ifstream file;
 	file.open("input.txt", std::ios::in);
 
@@ -503,7 +515,7 @@ int main()
 		run(file);
 	}
 	else
-		std::cout << "Failed to load the file"<<std::endl;
+		std::cout << "Failed to load the file" << std::endl;
 
 	file.close();
 
