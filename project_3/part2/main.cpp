@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <iomanip>
+#include <cstring>
 
 
 class inodes
@@ -226,6 +227,7 @@ public:
 		}
 		///AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 		///	does not specify if I should remove the blocks too
+		std::cout<<"	Successfully created file "<<name<<"\n\n";
 		return 0;
 	}
 
@@ -247,10 +249,13 @@ public:
 
 		// Step 4: Write the entire super block back to disk.
 
+		bool found = false;
+
 		for (auto &n : node)
 		{
 			if (strcmp(n.name, name) == 0)
 			{
+				found = true;
 				n.used = 0;
 				n.size = 0;
 				
@@ -263,12 +268,11 @@ public:
 
 				save();
 			}
-			else
-			{
-				std::cout << "Inode does not exist" << std::endl;
-			}
 		}
-		
+		if(!found)
+			std::cout << "Inode does not exist" << std::endl;
+		else
+			std::cout << "	File \""<<name<<"\" deleted.\n\n";
 		return 0;
 	} 
 
@@ -278,23 +282,20 @@ public:
 		// List names of all files on disk
 
 		// Step 1: Print the name and size fields of all used inodes.
-
+		std::string unused = "00000000";
 		std::cout << "List of files:" << std::endl;
 		for (auto n : node)
 		{
 			std::string aux;
 			for (auto e : n.name)
 			{
-				
-				if (e == '\0')
-				{
-					e = ' ';
-				}
-
 				aux += e;
 			}
 
-			std::cout << "    " << aux << " " << n.size << std::endl;
+			if(!(aux == "00000000"))
+			{
+				std::cout << "    " << aux << " " << n.size << std::endl<<std::endl;
+			}
 		}
 
 
@@ -314,11 +315,12 @@ public:
 
 		// Step 2: Seek to blockPointers[blockNum] and read the block
 		// from disk to buf.
-
+		bool found = false;
 		for (auto& n : node)
 		{
 			if (strcmp(n.name, name) == 0)
 			{
+				found = true;
 				if (n.size < blockNum)
 				{
 					std::cout << "The does not contain " << blockNum << " blocks" << std::endl;
@@ -342,10 +344,11 @@ public:
 
 				break;
 			}
-			else
-				std::cout << "File does not exist" << std::endl;
-		}
-		
+		}	
+		if(found)
+			std::cout<<"	Successfully read from file " << name <<"\n\n";
+		else
+			std::cout<<"	Failed to find file " << name <<"\n\n";
 		return 0;
 	}
 
@@ -359,11 +362,15 @@ public:
 		// Step 1: Locate the inode for this file as in Step 1 of delete.
 
 		// Step 2: Seek to blockPointers[blockNum] and write buf to disk.
+		
+		bool found = false;
 
 		for (auto& n : node)
 		{
+
 			if (strcmp(n.name, name) == 0)
 			{
+				found = true;
 				if (n.size < blockNum)
 				{
 					std::cout << "The does not contain " << blockNum << " blocks" << std::endl;
@@ -385,9 +392,15 @@ public:
 
 				break;
 			}
-			else
-				std::cout << "File does not exist" << std::endl;
+				
 		}
+
+		if(!found)
+		{
+			std::cout << "	File does not exist\n\n";
+		}
+		else
+			std::cout << "	Successfully wrote to file "<<name<<"\n\n";
 
 		return 0;
 	}
@@ -410,33 +423,37 @@ void run(std::ifstream& file)
 	char command;
 	while (file >> command)
 	{
+		std::cout<<"Command: " << command;
 		counter++;
 		if (command == 'C')
 		{
 			file >> file_name >> n;
-
+			std::cout<<" FileName "<<file_name<<" block # "<<n<<std::endl;
 			s.create(file_name, n);
 		}
 		else if (command == 'D')
 		{
 			file >> file_name;
-
+			std::cout<< " FileName " << file_name<<std::endl;
 			s.del(file_name);
 		}
 		else if (command == 'L')
 		{
+			std::cout<<std::endl;
 			s.ls();
 		}
 		else if (command == 'R')
 		{
 			file >> file_name >> n;
 
+			std::cout<<" fileName "<<file_name<<" block # "<< n<<std::endl;
+
 			s.read(file_name, n, buffer);
 		}
 		else if (command == 'W')
 		{
 			file >> file_name >> n;
-
+			std::cout<< " fileName " <<file_name<< " block # "<<n<<std::endl; 
 			s.write(file_name, n, buffer);
 		}
 		else
