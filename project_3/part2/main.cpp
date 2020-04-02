@@ -126,6 +126,7 @@ public:
 			{
 				return -1;
 			}
+			counter ++;
 		}
 		return 0;
 	}
