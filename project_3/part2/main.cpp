@@ -26,11 +26,16 @@ void ca_copy(char *c, char *c1,int length)
 	}
 }
 
+//c1 should always be the null terminated one
 bool ca_compare(char* c, char* c1, int length)
 {
 	for (auto i = 0; i < length; i++)
+	{
+		if (c1[i] == '\0')
+			return true;
 		if (c[i] != c1[i])
 			return false;
+	}
 
 	return true;
 }
