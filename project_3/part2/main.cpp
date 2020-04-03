@@ -311,7 +311,7 @@ public:
 				for (auto& e : n.block_pointers)
 					in_use[e] = '0';
 				for (auto& e : n.name)
-					e = 0;
+					e = '0';
 				for (auto& e : n.block_pointers)
 					e = 0;
 
