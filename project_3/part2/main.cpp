@@ -123,8 +123,7 @@ private:
 			node[i].name[j] = aux[pointer];
 			pointer++;
 		}
-		std::cout<<std::endl;
-
+	
 		//set the size of the file	
 		node[i].size = std::stoi(aux.substr(pointer, 4), 0, 16);
 		pointer += 4;
