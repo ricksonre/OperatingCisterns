@@ -26,6 +26,15 @@ void ca_copy(char *c, char *c1,int length)
 	}
 }
 
+bool ca_compare(char* c, char* c1, int length)
+{
+	for (auto i = 0; i < length; i++)
+		if (c[i] != c1[i])
+			return false;
+
+	return true;
+}
+
 class inodes
 {
 public:
@@ -65,8 +74,8 @@ std::ostream& operator <<(std::ostream& stream, inodes& node)
 		s += e;
 		stream << e;
 	}
-	std::cout << "DEBUG char8                " << node.name << std::endl;
-	std::cout << "DEBUG string             " << s << std::endl;
+	//std::cout << "DEBUG char8                " << node.name << std::endl;
+	//std::cout << "DEBUG string             " << s << std::endl;
 
 	stream << std::setw(4) << std::hex << node.size;
 	for (auto e : node.block_pointers)
@@ -214,8 +223,7 @@ public:
 			if (first_free == -1 && !node[i].used)
 				first_free = i;
 
-			if (strcmp(name, node[i].name) == 0)
-			//if (!dumb_compare(node[i].name, name))
+			if (strcmp(name, node[i].name) == 0 || ca_compare(node[i].name, name, 8))
 			{
 				std::cout << "File with the same name already exists" << std::endl;
 				return -1;
@@ -238,7 +246,6 @@ public:
 
 			if (free_blocks.size() > 0)
 			{
-				//strcpy(node[first_free].name, name);
 				ca_copy(name, node[first_free].name,8);
 				node[first_free].size = size;
 				node[first_free].used = 1;
@@ -270,7 +277,7 @@ public:
 
 
 
-	int del(char name[8])
+	int del(char *name)
 	{
 		// Delete the file with this name
 
@@ -290,8 +297,7 @@ public:
 
 		for (auto& n : node)
 		{
-			if (strcmp(n.name, name) == 0)
-			//if (!dumb_compare(n.name, name))
+			if (strcmp(n.name, name) == 0 || ca_compare(n.name, name,8))
 			{
 				found = true;
 				n.used = 0;
@@ -342,7 +348,7 @@ public:
 		return 0;
 	}
 
-	int read(char name[8], int blockNum, char buf[1024])
+	int read(char *name, int blockNum, char buf[1024])
 	{
 
 		// read this block from this file
@@ -356,8 +362,7 @@ public:
 		bool found = false;
 		for (auto& n : node)
 		{
-			if (strcmp(n.name, name) == 0)
-			//if (!dumb_compare(n.name, name))
+			if (strcmp(n.name, name) == 0 || ca_compare(n.name, name, 8))
 			{
 				found = true;
 				if (n.size < blockNum)
@@ -392,7 +397,7 @@ public:
 	}
 
 
-	int write(char name[8], int blockNum, char buf[1024])
+	int write(char *name, int blockNum, char buf[1024])
 	{
 
 		// write this block to this file
@@ -407,8 +412,7 @@ public:
 		for (auto& n : node)
 		{
 
-			if (strcmp(n.name, name) == 0)
-			//if (!dumb_compare(n.name, name))
+			if (strcmp(n.name, name) == 0 || ca_compare(n.name, name, 8))
 			{
 				found = true;
 				if (n.size < blockNum)
